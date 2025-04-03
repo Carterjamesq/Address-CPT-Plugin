@@ -7,7 +7,6 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-// Register Custom Post Type: Address
 function register_address_cpt() {
     register_post_type('address', [
         'label'         => 'Addresses',
@@ -20,7 +19,6 @@ function register_address_cpt() {
 }
 add_action('init', 'register_address_cpt');
 
-// Register Taxonomy: Address Category
 function register_address_category() {
     register_taxonomy('address_category', 'address', [
         'label'         => 'Categories',
@@ -31,7 +29,6 @@ function register_address_category() {
 }
 add_action('init', 'register_address_category');
 
-// Custom Permalink Structure for Address CPT
 function custom_address_permalinks($post_link, $post) {
     if ($post->post_type === 'address') {
         $terms = get_the_terms($post->ID, 'address_category');
@@ -43,13 +40,11 @@ function custom_address_permalinks($post_link, $post) {
 }
 add_filter('post_type_link', 'custom_address_permalinks', 10, 2);
 
-// Enable Gutenberg on Archive Pages
 function enable_gutenberg_on_archive() {
     add_post_type_support('page', 'editor');
 }
 add_action('init', 'enable_gutenberg_on_archive');
 
-// Add Meta Box for Disabling Permalink
 function add_disable_permalink_metabox() {
     add_meta_box(
         'disable_permalink',
@@ -62,13 +57,11 @@ function add_disable_permalink_metabox() {
 }
 add_action('add_meta_boxes', 'add_disable_permalink_metabox');
 
-// Meta Box Callback Function
 function disable_permalink_callback($post) {
     $value = get_post_meta($post->ID, '_disable_permalink', true);
     echo '<label><input type="checkbox" name="disable_permalink" value="1" ' . checked(1, $value, false) . '> Disable Permalink for address</label>';
 }
 
-// Save Meta Box Data
 function save_disable_permalink_meta($post_id) {
     if (isset($_POST['disable_permalink'])) {
         update_post_meta($post_id, '_disable_permalink', 1);
@@ -78,7 +71,6 @@ function save_disable_permalink_meta($post_id) {
 }
 add_action('save_post', 'save_disable_permalink_meta');
 
-// Redirect to 404 if Address Permalink is Disabled
 function check_disabled_permalink() {
     if (is_singular('address')) {
         global $post;
@@ -94,7 +86,6 @@ function check_disabled_permalink() {
 }
 add_action('template_redirect', 'check_disabled_permalink');
 
-// Shortcode to Display All Address CPT Posts
 function address_list_shortcode($atts) {
     ob_start();
     
